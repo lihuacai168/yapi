@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+  yapi-mongo:
+    image: mongo
+    container_name: yapi-mongo
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: anoyi
+      MONGO_INITDB_ROOT_PASSWORD: anoyi.com
+    networks:
+      - yapi-net
+
+  yapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yapi
+    depends_on:
+      - yapi-mongo
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config.json:/yapi/config.json
+    command: server/app.js
+    networks:
+      - yapi-net
+
+volumes:
+  mongo-data:
+
+networks:
+  yapi-net:
+    driver: bridge
